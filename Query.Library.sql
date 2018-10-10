@@ -50,11 +50,12 @@ CREATE PROCEDURE uspTotalBookLoans
 @BranchName VARCHAR(50)
 AS
 	SELECT 
-	a1.branch_name, c.books_title
+	a1.branch_name, COUNT(books_title)
 	FROM tbl_library a1
 	JOIN tbl_bookloans a2 ON a2.branch_id = a1. branch_id
 	JOIN tbl_books c ON c.books_id = a2.books_id
 	WHERE branch_name = @BranchName
+	GROUP BY a1.branch_name
 	
 EXEC uspTotalBookLoans 'Sharpstown'
 
@@ -68,7 +69,7 @@ AS
 	JOIN tbl_bookloans b ON a.books_id = b.books_id
 	JOIN tbl_borrower c ON c.card_number = b.card_number
 	GROUP BY borrower_name, c.card_number, c.borrower_address
-	HAVING COUNT(b.card_number) >= 5
+	HAVING COUNT(b.card_number) > 5
 	ORDER BY c.card_number ASC
 
 EXEC uspGreaterThanFiveBooks
